@@ -1,0 +1,157 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --accent-blue: #0B3D91;
+  --accent-light: #1756B3;
+  --accent-dark: #072D6C;
+  --accent-glow: #3178CD;
+  --dark-bg-900: #050A17;
+  --dark-bg-800: #0A1124;
+  --dark-bg-700: #0F182F;
+  --dark-bg-600: #152140;
+}
+
+@layer base {
+  body {
+    @apply text-neutral-50 bg-darkBg-900;
+  }
+  h1, h2, h3, h4, h5, h6 {
+    @apply font-bold text-white;
+  }
+  h1 {
+    @apply text-4xl md:text-5xl leading-tight;
+  }
+  h2 {
+    @apply text-3xl md:text-4xl;
+  }
+  h3 {
+    @apply text-2xl md:text-3xl;
+  }
+  p {
+    @apply mb-4 text-neutral-200;
+  }
+}
+
+@layer components {
+  .btn-primary {
+    @apply bg-accent-blue text-white font-semibold py-3 px-6 rounded-md hover:bg-accent-light transition-all duration-300 border border-accent-glow shadow-lg shadow-accent-blue/20;
+  }
+  .btn-secondary {
+    @apply border border-accent-glow text-white font-semibold py-3 px-6 rounded-md hover:bg-accent-blue/20 transition-all duration-300 shadow-lg shadow-accent-blue/10;
+  }
+  .section {
+    @apply py-16 md:py-24;
+  }
+  .container {
+    @apply max-w-7xl mx-auto px-4 sm:px-6 lg:px-8;
+  }
+  .card {
+    @apply bg-darkBg-800 border border-darkBg-600 p-6 transition-all duration-300 hover:border-accent-glow rounded-lg backdrop-blur-sm;
+  }
+  .card-glowing {
+    @apply bg-darkBg-800/80 border border-accent-glow/30 p-6 transition-all duration-300 hover:border-accent-glow/70 rounded-lg shadow-lg shadow-accent-glow/10 backdrop-blur-sm animate-glow-pulse;
+  }
+  .reveal {
+    @apply opacity-0;
+  }
+  .reveal-visible {
+    @apply animate-fade-in;
+  }
+  .reveal-up {
+    @apply opacity-0;
+  }
+  .reveal-up-visible {
+    @apply animate-slide-up;
+  }
+  .reveal-right {
+    @apply opacity-0;
+  }
+  .reveal-right-visible {
+    @apply animate-slide-in-right;
+  }
+}
+
+/* Modern design elements */
+.text-gradient {
+  @apply text-transparent bg-clip-text bg-gradient-to-r from-blue-300 to-accent-glow;
+}
+
+.hover-line {
+  @apply relative inline-block;
+}
+
+.hover-line::after {
+  content: '';
+  @apply absolute bottom-0 left-0 w-0 h-0.5 bg-accent-glow transition-all duration-300;
+}
+
+.hover-line:hover::after {
+  @apply w-full;
+}
+
+/* Intersection Observer Animations */
+.animated-section {
+  @apply opacity-0 translate-y-4 transition-all duration-700;
+}
+
+.animated-section.is-visible {
+  @apply opacity-100 translate-y-0;
+}
+
+/* Custom animations */
+.fade-in {
+  animation: fadeIn 0.5s ease-in forwards;
+}
+
+@keyframes fadeIn {
+  0% { opacity: 0; }
+  100% { opacity: 1; }
+}
+
+/* Futuristic Grid & Effects */
+.futuristic-grid {
+  display: none;
+}
+
+.glow-border {
+  @apply border border-accent-glow/50 shadow-lg shadow-accent-glow/30;
+}
+
+.glassmorphism {
+  @apply bg-darkBg-800/60 backdrop-blur-md border border-accent-glow/30 rounded-xl;
+}
+
+.glassmorphism-dark {
+  @apply bg-darkBg-900/80 backdrop-blur-md border border-darkBg-700 rounded-xl;
+}
+
+/* Futuristic dot pattern */
+.dot-pattern {
+  background-image: radial-gradient(rgba(49, 120, 205, 0.4) 1.5px, transparent 1.5px);
+  background-size: 30px 30px;
+}
+
+/* Faded dot pattern - shows dots only in the middle with a gradient fade */
+.dot-pattern-faded {
+  background-image: radial-gradient(rgba(49, 120, 205, 0.4) 1.5px, transparent 1.5px);
+  background-size: 30px 30px;
+  mask-image: radial-gradient(circle at center, black 30%, transparent 70%);
+  -webkit-mask-image: radial-gradient(circle at center, black 30%, transparent 70%);
+}
+
+/* Light overlay to brighten background */
+.light-overlay {
+  background: radial-gradient(circle at 50% 50%, rgba(49, 120, 205, 0.03) 0%, rgba(255, 255, 255, 0.02) 100%);
+}
+
+/* Remove problematic transition helpers */
+.background-transition {
+  position: relative;
+}
+
+/* Remove the problematic footer transition */
+.footer-transition::before {
+  content: none;
+} 
