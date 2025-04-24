@@ -149,11 +149,6 @@ export default async function CaseStudyPage({ params }: { params: any }) {
                     className="w-full"
                     priority
                     unoptimized={true}
-                    onError={(e) => {
-                      console.error('Image load error:', e);
-                      // @ts-ignore
-                      e.target.src = 'https://via.placeholder.com/1200x675?text=Image+Failed+to+Load';
-                    }}
                   />
                 </div>
               )}

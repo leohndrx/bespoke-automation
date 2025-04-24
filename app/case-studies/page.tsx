@@ -99,11 +99,6 @@ export default async function CaseStudiesPage() {
                             style={{ objectFit: 'cover' }}
                             className="transition-transform duration-500 group-hover:scale-105"
                             unoptimized={true}
-                            onError={(e) => {
-                              console.error('Image load error:', e);
-                              // @ts-ignore
-                              e.target.src = 'https://via.placeholder.com/600x400?text=Image+Failed+to+Load';
-                            }}
                           />
                         ) : (
                           <div className="w-full h-full bg-darkBg-700 flex items-center justify-center">
