@@ -9,17 +9,22 @@ import { PortableText } from '@portabletext/react';
 
 export const revalidate = 3600; // Revalidate every hour
 
-export async function generateMetadata({ params }: { params: { slug: string } }) {
-  // Access the slug properly
-  const slug = Array.isArray(params.slug) ? params.slug[0] : params.slug;
+// Fix for Next.js 14 dynamic params
+export async function generateMetadata({ params }: { params: any }) {
+  // Await params before accessing properties
+  const resolvedParams = await Promise.resolve(params);
+  const slug = resolvedParams.slug;
+  
   return {
     title: `Case Study: ${slug}`,
   };
 }
 
-export default async function CaseStudyPage({ params }: { params: { slug: string } }) {
-  // Correctly handle the slug from params
-  const slug = Array.isArray(params.slug) ? params.slug[0] : params.slug;
+// Fix for Next.js 14 dynamic params
+export default async function CaseStudyPage({ params }: { params: any }) {
+  // Await params before accessing properties
+  const resolvedParams = await Promise.resolve(params);
+  const slug = resolvedParams.slug;
   
   if (!slug) {
     return (
