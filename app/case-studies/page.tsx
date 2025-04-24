@@ -11,8 +11,19 @@ export const revalidate = 3600; // Revalidate every hour
 // Helper function to safely get image URL as a string
 const getImageUrl = (image: any): string => {
   if (!image) return 'https://via.placeholder.com/600x400?text=No+Image';
-  const imageUrl = urlForImage(image);
-  return typeof imageUrl.url === 'function' ? imageUrl.url() : String(imageUrl);
+  try {
+    // Force URL string generation for production
+    const imageBuilder = urlForImage(image);
+    if (typeof imageBuilder.url === 'function') {
+      return imageBuilder.url();
+    } else {
+      // Fallback for production
+      return String(imageBuilder);
+    }
+  } catch (error) {
+    console.error('Error generating image URL:', error);
+    return 'https://via.placeholder.com/600x400?text=Image+Error';
+  }
 };
 
 export default async function CaseStudiesPage() {
