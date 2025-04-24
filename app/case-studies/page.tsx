@@ -14,32 +14,23 @@ const getImageUrl = (image: any): string => {
   if (!image) return 'https://via.placeholder.com/600x400?text=No+Image';
   
   try {
-    // Direct URL construction for Sanity images when needed
+    // Super simple approach - if we have an asset reference, construct the URL directly
     if (image?.asset?._ref) {
-      // Extract parts from the image reference
+      // Extract the image ID from the reference
       const ref = image.asset._ref;
       
-      // Handle different Sanity image reference formats
-      // Format is typically: image-{assetId}-{dimensions}-{format}
-      if (ref.startsWith('image-')) {
-        const [_, assetId, dimensions, format] = ref.split('-');
-        
-        // Properly handle the format which might contain extra parts
-        const formatExtension = format.split('.')[0]; // Get just the file extension
-        
-        // Construct direct Sanity CDN URL - hardcoding project ID and dataset for reliability
-        const directUrl = `https://cdn.sanity.io/images/ut778fbn/production/${assetId}-${dimensions}.${formatExtension}`;
-        return directUrl;
+      // Simple regex to extract the ID and format
+      const match = ref.match(/image-([a-zA-Z0-9]+)-(\d+x\d+)-([a-z]+)/);
+      if (match) {
+        const [_, id, dimensions, format] = match;
+        const url = `https://cdn.sanity.io/images/ut778fbn/production/${id}-${dimensions}.${format}`;
+        return url;
       }
     }
     
-    // Fall back to the standard image builder if reference parsing fails
-    const imageBuilder = urlForImage(image);
-    if (typeof imageBuilder.url === 'function') {
-      return imageBuilder.url();
-    } else {
-      return String(imageBuilder);
-    }
+    // Fall back to placeholder if we can't parse the reference
+    console.warn('Could not parse image reference:', image);
+    return 'https://via.placeholder.com/600x400?text=Image+Error';
   } catch (error) {
     console.error('Error generating image URL:', error, image);
     return 'https://via.placeholder.com/600x400?text=Image+Error';
@@ -107,6 +98,12 @@ export default async function CaseStudiesPage() {
                             sizes="(max-width: 768px) 100vw, 50vw"
                             style={{ objectFit: 'cover' }}
                             className="transition-transform duration-500 group-hover:scale-105"
+                            unoptimized={true}
+                            onError={(e) => {
+                              console.error('Image load error:', e);
+                              // @ts-ignore
+                              e.target.src = 'https://via.placeholder.com/600x400?text=Image+Failed+to+Load';
+                            }}
                           />
                         ) : (
                           <div className="w-full h-full bg-darkBg-700 flex items-center justify-center">

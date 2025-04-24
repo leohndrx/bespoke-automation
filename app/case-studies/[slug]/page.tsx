@@ -15,40 +15,25 @@ const getImageUrl = (image: any): string => {
   if (!image) return 'https://via.placeholder.com/600x400?text=No+Image';
   
   try {
-    // Direct URL construction for Sanity images when needed
+    // Super simple approach - if we have an asset reference, construct the URL directly
     if (image?.asset?._ref) {
-      // Extract parts from the image reference
+      // Extract the image ID from the reference
       const ref = image.asset._ref;
       console.log('Processing image ref:', ref);
       
-      // Handle different Sanity image reference formats
-      // Format is typically: image-{assetId}-{dimensions}-{format}
-      if (ref.startsWith('image-')) {
-        const [_, assetId, dimensions, format] = ref.split('-');
-        
-        // Properly handle the format which might contain extra parts
-        const formatExtension = format.split('.')[0]; // Get just the file extension
-        
-        // Construct direct Sanity CDN URL - hardcoding project ID and dataset for reliability
-        const directUrl = `https://cdn.sanity.io/images/ut778fbn/production/${assetId}-${dimensions}.${formatExtension}`;
-        
-        console.log('Generated direct URL:', directUrl);
-        return directUrl;
+      // Simple regex to extract the ID and format
+      const match = ref.match(/image-([a-zA-Z0-9]+)-(\d+x\d+)-([a-z]+)/);
+      if (match) {
+        const [_, id, dimensions, format] = match;
+        const url = `https://cdn.sanity.io/images/ut778fbn/production/${id}-${dimensions}.${format}`;
+        console.log('Direct image URL:', url);
+        return url;
       }
     }
     
-    // Fall back to the standard image builder if reference parsing fails
-    console.log('Falling back to standard URL builder');
-    const imageBuilder = urlForImage(image);
-    if (typeof imageBuilder.url === 'function') {
-      const url = imageBuilder.url();
-      console.log('URL from builder function:', url);
-      return url;
-    } else {
-      const url = String(imageBuilder);
-      console.log('String URL from builder:', url);
-      return url;
-    }
+    // Fall back to placeholder if we can't parse the reference
+    console.warn('Could not parse image reference:', image);
+    return 'https://via.placeholder.com/600x400?text=Image+Error';
   } catch (error) {
     console.error('Error generating image URL:', error, image);
     return 'https://via.placeholder.com/600x400?text=Image+Error';
@@ -163,6 +148,12 @@ export default async function CaseStudyPage({ params }: { params: any }) {
                     height={675}
                     className="w-full"
                     priority
+                    unoptimized={true}
+                    onError={(e) => {
+                      console.error('Image load error:', e);
+                      // @ts-ignore
+                      e.target.src = 'https://via.placeholder.com/1200x675?text=Image+Failed+to+Load';
+                    }}
                   />
                 </div>
               )}
