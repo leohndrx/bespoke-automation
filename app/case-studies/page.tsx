@@ -1,10 +1,16 @@
 import React from 'react';
+import Link from 'next/link';
+import Image from 'next/image';
+import { getCaseStudies } from '../../sanity/lib/client';
+import { urlForImage } from '../../sanity/lib/image';
 import Header from '../../components/layout/Header';
 import Footer from '../../components/layout/Footer';
-import { motion } from 'framer-motion';
-import Link from 'next/link';
 
-export default function CaseStudies() {
+export const revalidate = 3600; // Revalidate every hour
+
+export default async function CaseStudiesPage() {
+  const caseStudies = await getCaseStudies();
+
   return (
     <main>
       <Header />
@@ -38,21 +44,97 @@ export default function CaseStudies() {
               Ontdek hoe we bedrijven hebben geholpen met no-code automatisering om tijd te besparen, efficiënter te werken en groei te realiseren.
             </p>
             
-            <div className="glassmorphism p-12 md:p-16 mt-12 text-center">
-              <h2 className="text-2xl md:text-3xl font-bold mb-6 text-white">Binnenkort beschikbaar</h2>
-              <p className="text-blue-100 mb-8">
-                We werken momenteel aan het documenteren van onze meest recente klantsuccessen. Kom binnenkort terug om gedetailleerde case studies te bekijken.
-              </p>
-              
-              <Link href="/">
-                <div className="btn-primary inline-flex items-center justify-center">
-                  <span>Terug naar de homepagina</span>
-                  <svg className="w-5 h-5 ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 19l-7-7m0 0l7-7m-7 7h18" />
-                  </svg>
-                </div>
-              </Link>
-            </div>
+            {caseStudies.length > 0 ? (
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-10 mt-12 max-w-5xl mx-auto">
+                {caseStudies.map((caseStudy) => (
+                  <Link 
+                    key={caseStudy._id} 
+                    href={`/case-studies/${caseStudy.slug.current}`}
+                    className="block"
+                  >
+                    <div className="glassmorphism h-full transition-all duration-300 hover:border-accent-glow/40 hover:shadow-lg hover:shadow-accent-blue/10 overflow-hidden group">
+                      <div className="relative h-64 overflow-hidden">
+                        {caseStudy.mainImage ? (
+                          <Image
+                            src={urlForImage(caseStudy.mainImage).url()}
+                            alt={caseStudy.title}
+                            fill
+                            sizes="(max-width: 768px) 100vw, 50vw"
+                            style={{ objectFit: 'cover' }}
+                            className="transition-transform duration-500 group-hover:scale-105"
+                          />
+                        ) : (
+                          <div className="w-full h-full bg-darkBg-700 flex items-center justify-center">
+                            <span className="text-blue-100/50">No image available</span>
+                          </div>
+                        )}
+                        
+                        {caseStudy.clientLogo && (
+                          <div className="absolute top-4 right-4 w-16 h-16 bg-white/90 rounded-full p-2 flex items-center justify-center">
+                            <Image
+                              src={urlForImage(caseStudy.clientLogo).url()}
+                              alt={caseStudy.clientName || ''}
+                              width={48}
+                              height={48}
+                              style={{ objectFit: 'contain' }}
+                            />
+                          </div>
+                        )}
+                      </div>
+                      
+                      <div className="p-8">
+                        <h3 className="text-2xl font-bold mb-4 text-white group-hover:text-accent-glow transition-colors">
+                          {caseStudy.title}
+                        </h3>
+                        
+                        <p className="text-blue-100 mb-6 line-clamp-3">
+                          {caseStudy.introduction}
+                        </p>
+                        
+                        {caseStudy.technologies && caseStudy.technologies.length > 0 && (
+                          <div className="flex flex-wrap gap-2 mb-6">
+                            {caseStudy.technologies.map((tech, index) => (
+                              <span 
+                                key={index}
+                                className="text-xs px-3 py-1 bg-darkBg-700 text-accent-glow rounded-full"
+                              >
+                                {tech}
+                              </span>
+                            ))}
+                          </div>
+                        )}
+                        
+                        <div className="flex justify-between items-center text-sm text-blue-100/70">
+                          <span>{caseStudy.clientName}</span>
+                          <span>
+                            {new Date(caseStudy.publishedAt).toLocaleDateString('nl-NL', {
+                              year: 'numeric',
+                              month: 'short',
+                            })}
+                          </span>
+                        </div>
+                      </div>
+                    </div>
+                  </Link>
+                ))}
+              </div>
+            ) : (
+              <div className="glassmorphism p-12 md:p-16 mt-12 text-center">
+                <h2 className="text-2xl md:text-3xl font-bold mb-6 text-white">Binnenkort beschikbaar</h2>
+                <p className="text-blue-100 mb-8">
+                  We werken momenteel aan het documenteren van onze meest recente klantsuccessen. Kom binnenkort terug om gedetailleerde case studies te bekijken.
+                </p>
+                
+                <Link href="/">
+                  <div className="btn-primary inline-flex items-center justify-center">
+                    <span>Terug naar de homepagina</span>
+                    <svg className="w-5 h-5 ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 19l-7-7m0 0l7-7m-7 7h18" />
+                    </svg>
+                  </div>
+                </Link>
+              </div>
+            )}
           </div>
         </div>
       </section>
