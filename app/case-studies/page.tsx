@@ -9,7 +9,14 @@ import Footer from '../../components/layout/Footer';
 export const revalidate = 3600; // Revalidate every hour
 
 export default async function CaseStudiesPage() {
-  const caseStudies = await getCaseStudies();
+  let caseStudies = [];
+  
+  try {
+    caseStudies = await getCaseStudies();
+  } catch (error) {
+    console.error('Error fetching case studies:', error);
+    // Continue with empty array so we show the "Coming soon" message
+  }
 
   return (
     <main>
