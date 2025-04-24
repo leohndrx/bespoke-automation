@@ -8,6 +8,13 @@ import Footer from '../../components/layout/Footer';
 
 export const revalidate = 3600; // Revalidate every hour
 
+// Helper function to safely get image URL as a string
+const getImageUrl = (image: any): string => {
+  if (!image) return 'https://via.placeholder.com/600x400?text=No+Image';
+  const imageUrl = urlForImage(image);
+  return typeof imageUrl.url === 'function' ? imageUrl.url() : String(imageUrl);
+};
+
 export default async function CaseStudiesPage() {
   let caseStudies = [];
   
@@ -63,7 +70,7 @@ export default async function CaseStudiesPage() {
                       <div className="relative h-64 overflow-hidden">
                         {caseStudy.mainImage ? (
                           <Image
-                            src={urlForImage(caseStudy.mainImage).url()}
+                            src={getImageUrl(caseStudy.mainImage)}
                             alt={caseStudy.title}
                             fill
                             sizes="(max-width: 768px) 100vw, 50vw"
@@ -79,7 +86,7 @@ export default async function CaseStudiesPage() {
                         {caseStudy.clientLogo && (
                           <div className="absolute top-4 right-4 w-16 h-16 bg-white/90 rounded-full p-2 flex items-center justify-center">
                             <Image
-                              src={urlForImage(caseStudy.clientLogo).url()}
+                              src={getImageUrl(caseStudy.clientLogo)}
                               alt={caseStudy.clientName || ''}
                               width={48}
                               height={48}

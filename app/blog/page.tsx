@@ -12,6 +12,13 @@ export const revalidate = 3600; // Revalidate every hour
 export default async function BlogPage() {
   const posts = await getBlogPosts();
 
+  // Helper function to safely get image URL as a string
+  const getImageUrl = (image: any): string => {
+    if (!image) return 'https://via.placeholder.com/600x400?text=No+Image';
+    const imageUrl = urlForImage(image);
+    return typeof imageUrl.url === 'function' ? imageUrl.url() : String(imageUrl);
+  };
+
   return (
     <main>
       <Header />
@@ -53,7 +60,7 @@ export default async function BlogPage() {
                     <div className="relative h-52 overflow-hidden">
                       {post.mainImage ? (
                         <Image
-                          src={urlForImage(post.mainImage).url()}
+                          src={getImageUrl(post.mainImage)}
                           alt={post.title}
                           fill
                           sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
@@ -85,7 +92,7 @@ export default async function BlogPage() {
                           {post.author?.image && (
                             <div className="w-8 h-8 rounded-full overflow-hidden mr-2 border border-accent-glow/20">
                               <Image
-                                src={urlForImage(post.author.image).url()}
+                                src={getImageUrl(post.author.image)}
                                 alt={post.author.name}
                                 width={32}
                                 height={32}

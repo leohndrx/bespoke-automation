@@ -9,6 +9,13 @@ import { PortableText } from '@portabletext/react';
 
 export const revalidate = 3600; // Revalidate every hour
 
+// Helper function to safely get image URL as a string
+const getImageUrl = (image: any): string => {
+  if (!image) return 'https://via.placeholder.com/600x400?text=No+Image';
+  const imageUrl = urlForImage(image);
+  return typeof imageUrl.url === 'function' ? imageUrl.url() : String(imageUrl);
+};
+
 // Fix for Next.js 14 dynamic params
 export async function generateMetadata({ params }: { params: any }) {
   // Await params before accessing properties
@@ -108,7 +115,7 @@ export default async function CaseStudyPage({ params }: { params: any }) {
               {caseStudy.mainImage && (
                 <div className="mb-12 rounded-xl overflow-hidden shadow-xl">
                   <Image
-                    src={urlForImage(caseStudy.mainImage).url()}
+                    src={getImageUrl(caseStudy.mainImage)}
                     alt={caseStudy.title}
                     width={1200}
                     height={675}
@@ -241,7 +248,7 @@ export default async function CaseStudyPage({ params }: { params: any }) {
                       <div key={index} className="glassmorphism p-2 overflow-hidden">
                         <div className="relative h-48 md:h-64">
                           <Image
-                            src={urlForImage(image).url()}
+                            src={getImageUrl(image)}
                             alt={image.caption || `Gallery image ${index + 1}`}
                             fill
                             className="object-cover"
