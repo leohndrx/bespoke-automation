@@ -5,23 +5,42 @@ import { getCaseStudies } from '../../sanity/lib/client';
 import { urlForImage } from '../../sanity/lib/image';
 import Header from '../../components/layout/Header';
 import Footer from '../../components/layout/Footer';
+import { projectId, dataset } from '../../sanity/env';
 
 export const revalidate = 3600; // Revalidate every hour
 
 // Helper function to safely get image URL as a string
 const getImageUrl = (image: any): string => {
   if (!image) return 'https://via.placeholder.com/600x400?text=No+Image';
+  
   try {
-    // Force URL string generation for production
+    // Direct URL construction for Sanity images when needed
+    if (image?.asset?._ref) {
+      // Extract parts from the image reference
+      // Format is image-{assetId}-{dimensions}-{format}
+      const refParts = image.asset._ref.split('-');
+      
+      // Extract the asset ID and format
+      if (refParts.length >= 4) {
+        const assetId = refParts[1];
+        const dimensions = refParts[2];
+        let format = refParts[3];
+        
+        // Construct direct Sanity CDN URL
+        const directUrl = `https://cdn.sanity.io/images/${projectId}/${dataset}/${assetId}-${dimensions}.${format}`;
+        return directUrl;
+      }
+    }
+    
+    // Fall back to the standard image builder if reference parsing fails
     const imageBuilder = urlForImage(image);
     if (typeof imageBuilder.url === 'function') {
       return imageBuilder.url();
     } else {
-      // Fallback for production
       return String(imageBuilder);
     }
   } catch (error) {
-    console.error('Error generating image URL:', error);
+    console.error('Error generating image URL:', error, image);
     return 'https://via.placeholder.com/600x400?text=Image+Error';
   }
 };
