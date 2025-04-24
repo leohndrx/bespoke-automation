@@ -18,32 +18,36 @@ const getImageUrl = (image: any): string => {
     // Direct URL construction for Sanity images when needed
     if (image?.asset?._ref) {
       // Extract parts from the image reference
-      // Format is image-{assetId}-{dimensions}-{format}
-      const refParts = image.asset._ref.split('-');
+      const ref = image.asset._ref;
+      console.log('Processing image ref:', ref);
       
-      // Extract the asset ID and format
-      if (refParts.length >= 4) {
-        const assetId = refParts[1];
-        const dimensions = refParts[2];
-        let format = refParts[3];
+      // Handle different Sanity image reference formats
+      // Format is typically: image-{assetId}-{dimensions}-{format}
+      if (ref.startsWith('image-')) {
+        const [_, assetId, dimensions, format] = ref.split('-');
         
-        // Log for debugging
-        console.log('Image ref:', image.asset._ref);
+        // Properly handle the format which might contain extra parts
+        const formatExtension = format.split('.')[0]; // Get just the file extension
         
-        // Construct direct Sanity CDN URL
-        const directUrl = `https://cdn.sanity.io/images/${projectId}/${dataset}/${assetId}-${dimensions}.${format}`;
-        console.log('Generated image URL:', directUrl);
-        console.log('FINAL Main image URL:', directUrl);
+        // Construct direct Sanity CDN URL - hardcoding project ID and dataset for reliability
+        const directUrl = `https://cdn.sanity.io/images/ut778fbn/production/${assetId}-${dimensions}.${formatExtension}`;
+        
+        console.log('Generated direct URL:', directUrl);
         return directUrl;
       }
     }
     
     // Fall back to the standard image builder if reference parsing fails
+    console.log('Falling back to standard URL builder');
     const imageBuilder = urlForImage(image);
     if (typeof imageBuilder.url === 'function') {
-      return imageBuilder.url();
+      const url = imageBuilder.url();
+      console.log('URL from builder function:', url);
+      return url;
     } else {
-      return String(imageBuilder);
+      const url = String(imageBuilder);
+      console.log('String URL from builder:', url);
+      return url;
     }
   } catch (error) {
     console.error('Error generating image URL:', error, image);

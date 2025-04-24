@@ -17,17 +17,18 @@ const getImageUrl = (image: any): string => {
     // Direct URL construction for Sanity images when needed
     if (image?.asset?._ref) {
       // Extract parts from the image reference
-      // Format is image-{assetId}-{dimensions}-{format}
-      const refParts = image.asset._ref.split('-');
+      const ref = image.asset._ref;
       
-      // Extract the asset ID and format
-      if (refParts.length >= 4) {
-        const assetId = refParts[1];
-        const dimensions = refParts[2];
-        let format = refParts[3];
+      // Handle different Sanity image reference formats
+      // Format is typically: image-{assetId}-{dimensions}-{format}
+      if (ref.startsWith('image-')) {
+        const [_, assetId, dimensions, format] = ref.split('-');
         
-        // Construct direct Sanity CDN URL
-        const directUrl = `https://cdn.sanity.io/images/${projectId}/${dataset}/${assetId}-${dimensions}.${format}`;
+        // Properly handle the format which might contain extra parts
+        const formatExtension = format.split('.')[0]; // Get just the file extension
+        
+        // Construct direct Sanity CDN URL - hardcoding project ID and dataset for reliability
+        const directUrl = `https://cdn.sanity.io/images/ut778fbn/production/${assetId}-${dimensions}.${formatExtension}`;
         return directUrl;
       }
     }
