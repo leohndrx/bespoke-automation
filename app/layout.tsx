@@ -9,9 +9,9 @@ const inter = Inter({
 });
 
 export const metadata: Metadata = {
-  title: "Bespoke Automation | Automatiseer je Expeditie & Douane Processen",
-  description: "Automatiseer je Onboarding & Boekingsproces binnen 30 Dagen – of je betaalt niets. Voor expediteurs en douaniers die willen groeien zonder extra personeel.",
-  keywords: "expediteur automatisering, douane automatisering, EORI check, BTW validatie, documentverwerking AI, expeditie workflow, automatisch onboarding",
+  title: "Bespoke Automation | 10+ Uur Per Week Besparen Met AI Automatisering",
+  description: "Zeg vaarwel tegen handmatig werk. Binnen 30 dagen draaien je workflows op AI-automatisering, of we werken gratis door. Groei zonder nieuw personeel.",
+  keywords: "procesautomatisering, workflow automatisering, AI integratie, bedrijfsgroei, no-code automatisering, handmatige taken automatiseren, documentverwerking AI",
 };
 
 export default function RootLayout({
